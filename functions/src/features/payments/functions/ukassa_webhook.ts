@@ -6,10 +6,7 @@ import {
   GlobalExceptionType,
 } from "../../../global/exceptions/global_exception";
 
-import {
-  firestoreCollectionsConfig,
-  firestoreInstance,
-} from "../../../global/firebase_config/firebase_config";
+import { firestoreCollectionsConfig } from "../../../global/firebase_config/firebase_config";
 
 import {
   DEFAULT_CURRENCY,
@@ -22,11 +19,11 @@ import {
   PaymentsExceptionType,
 } from "../exceptions/payments_exception";
 import { UkassaEvents } from "../enums/ukassa_events";
-import { getOrdersRecordByUid } from "../../../global/utils/get_orders_record_by_uid";
 import { OrderStatus } from "../../../global/enums/order_status";
 import { captureUkassaPayment } from "../handlers/ukassa/capture_ukassa_payment";
 import { getPaymentMethodsRecordByUserRefAndPaymentMethodId } from "../utils/get_payment_methods_record_by_user_ref_and_payment_method_id";
 import { Timestamp } from "firebase-admin/firestore";
+import { getOrdersRecordByPaymentId } from "../../../global/utils/get_orders_record_by_payment_id";
 
 export const ukassaWebhook = onRequest(
   {
@@ -51,7 +48,7 @@ export const ukassaWebhook = onRequest(
         const paymentId = body.object.id;
 
         // ? info : search order
-        const ordersRecord = await getOrdersRecordByUid(
+        const ordersRecord = await getOrdersRecordByPaymentId(
           firestoreCollectionsConfig,
           paymentId
         );
@@ -72,7 +69,7 @@ export const ukassaWebhook = onRequest(
             404
           );
         }
-        const writeBatch = firestoreInstance.batch();
+        // const writeBatch = firestoreInstance.batch();
 
         if (
           body.object.status == "waiting_for_capture" &&
@@ -96,11 +93,9 @@ export const ukassaWebhook = onRequest(
           );
 
           if (capturedPayment === null) {
-            writeBatch.update(ordersRecord.ref, {
+            ordersRecord.ref.update({
               status: OrderStatus.Error,
             });
-
-            await writeBatch.commit();
 
             throw new PaymentsException(
               "Payment was not created.",
@@ -108,15 +103,13 @@ export const ukassaWebhook = onRequest(
             );
           } else {
             // ? info: confirm payment
-            writeBatch.update(ordersRecord.ref, {
+            ordersRecord.ref.update({
               status: OrderStatus.Paid,
             });
-
-            await writeBatch.commit();
           }
 
           const foundPaymentMethodDocument =
-            getPaymentMethodsRecordByUserRefAndPaymentMethodId(
+            await getPaymentMethodsRecordByUserRefAndPaymentMethodId(
               ordersRecord.created_by!,
               body.object.payment_method.id
             );
@@ -124,20 +117,16 @@ export const ukassaWebhook = onRequest(
           if (foundPaymentMethodDocument === null) {
             // ? save payment method
 
-            const newPaymentMethodRef = ordersRecord
+            await ordersRecord
               .created_by!.collection(USERS_PAYMENT_METHODS_COLLECTION)
-              .doc();
-
-            writeBatch.create(newPaymentMethodRef, {
-              ref: newPaymentMethodRef,
-              id: body.object.payment_method.id,
-              created_at: Timestamp.now(),
-              created_by: ordersRecord.created_by!,
-              last4: body.object.payment_method.card.last4,
-              type: body.object.payment_method.type,
-            });
-
-            await writeBatch.commit();
+              .doc(body.object.payment_method.id)
+              .set({
+                id: body.object.payment_method.id,
+                created_at: Timestamp.now(),
+                created_by: ordersRecord.created_by!,
+                last4: body.object.payment_method.card.last4,
+                type: body.object.payment_method.type,
+              });
           }
         }
       } else if (body.event == UkassaEvents.RefundSucceeded) {
@@ -146,18 +135,25 @@ export const ukassaWebhook = onRequest(
           body: body,
         });
 
-        const paymentId = body.object.id;
+        // const paymentId = body.object.id;
+        const paymentId = body.object.payment_id;
 
         // ? info : search order
-        const ordersRecord = await getOrdersRecordByUid(
+        const ordersRecord = await getOrdersRecordByPaymentId(
           firestoreCollectionsConfig,
           paymentId
         );
 
-        if (
-          ordersRecord === null ||
-          ordersRecord?.status === OrderStatus.Refunded
-        ) {
+        if (ordersRecord === null) {
+          logger.info({
+            message: `Order with uid ${paymentId} is not found.`,
+          });
+
+          response.status(404).send("Not found");
+          return;
+        }
+
+        if (ordersRecord?.status === OrderStatus.Refunded) {
           logger.info({
             message: `Order with uid ${paymentId} has already been refunded.`,
             ordersRecord: ordersRecord,

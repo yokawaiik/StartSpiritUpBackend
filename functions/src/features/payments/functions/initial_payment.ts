@@ -100,6 +100,17 @@ export const initialPayment = onRequest(
         );
       }
 
+      if (
+        ordersRecord.status !== OrderStatus.Paid &&
+        ordersRecord.status !== OrderStatus.Refunded
+      ) {
+        throw new GlobalException(
+          `Order with ref ${orderRefPath} has already been paid or refunded.`,
+          GlobalExceptionType.DocumentNotFound,
+          403
+        );
+      }
+
       const payment: Payment | null = await createUkassaPayment(
         process.env.UKASSA_SHOP_ID!,
         process.env.UKASSA_SECRET_KEY!,

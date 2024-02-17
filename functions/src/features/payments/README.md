@@ -1,29 +1,55 @@
-1. initialPayment - инициализация платежа
-2. payWithPaymentMethod - оплата если у пользователя есть сохраненная карта
-3. ukassaWebhook - обрабатывает платеж
+# Модуль платежей, возврата и оплаты
+
+
+## Процесс оплаты
+
+[Процесс оплаты](https://drive.google.com/file/d/12a8Mt8ZIfCsqR3OEdjCwoS_dH3CWKeKD/view?usp=sharing)
+
+### Последовательность вызовов
+
+#### Оплата, если карта уже есть (оплату уже совершал ранее)
+1. payWithPaymentMethod - создание на стороне Ukassa платежа (чека)
+2. ukassaWebhook - обрабатывает платеж и меняет статус документа
+
+#### Оплата первый раз
+1. initialPayment - создание на стороне Ukassa платежа (чека)
+2. ukassaWebhook - обрабатывает платеж и меняет статус документа
+
+#### Возврат 
+1. refundPayment - 
+2. ukassaWebhook - обрабатывает возврат и меняет статус документа
+
+## Функции 
+
+Функции требуют заголовок 
+    Authorization: ${user_id_token}
+
+### Function URL (base_features:initialPayment(us-central1))
+
+Параметры:
+    orderRefPath: string,
+
+### Function URL (base_features:payWithPaymentMethod(us-central1))
+
+Параметры:
+    orderRefPath: string
+    paymentMethodRefPath: string
+
+### Function URL (base_features:refundPayment(us-central1))
+
+Параметры:
+    orderRefPath: string
+
+### Function URL (base_features:ukassaWebhook(us-central1))
 
 
 
 
-
-## Если карта уже есть
-1. payWithPaymentMethod
-2. ukassaWebhook
-
-## Первый раз
-1. initialPayment
-2. ukassaWebhook
-
-
-
-# добавить триггер для коллекции payout_requests
+## Триггер для коллекции payout_requests
 
 
 
 
-## Возврат
-
-withdrawMoney
 
 
 
