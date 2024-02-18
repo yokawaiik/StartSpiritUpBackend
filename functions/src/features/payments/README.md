@@ -43,11 +43,11 @@
 ### Function URL (base_features:ukassaWebhook(us-central1))
 
 
-
-
 ## Триггер для коллекции payout_requests
+Работает для коллекции payout_requests/{doc} и реагирует при изменении в документе поля:
+    status = pending --> status = accepted
 
-
+<!-- Возможно, следует добавить в структуру коллекции поле message_ref - для того, чтобы изменять сообщение о выводе -->
 
 
 
@@ -92,3 +92,8 @@ refundEvent(DocumentReference event) {
     // создаем документ в коллекции payments
 }
 
+
+
+## Ссылки 
+
+1. [Тестовые карты для Ukassa](https://yookassa.ru/developers/payment-acceptance/testing-and-going-live/testing#test-bank-card)

@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "55c24b29-0454-4b52-827d-cc79d5b8c10e",
+		"name": "StartSpiritUp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27895804",
+		"_collection_link": "https://martian-water-207779.postman.co/workspace/AppBusters~17e096bf-47f6-4412-9513-161fff35b761/collection/27895804-55c24b29-0454-4b52-827d-cc79d5b8c10e?action=share&creator=27895804&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "base_features:initialPayment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{user_id_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "orderRefPath",
+							"value": "orders/{{order_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://initialpayment-6gg6jx5ylq-uc.a.run.app",
+					"protocol": "https",
+					"host": [
+						"initialpayment-6gg6jx5ylq-uc",
+						"a",
+						"run",
+						"app"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "base_features:payWithPaymentMethod",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{user_id_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "orderRefPath",
+							"value": "orders/{{order_id}}",
+							"type": "text"
+						},
+						{
+							"key": "paymentMethodRefPath",
+							"value": "users/g2dHcXgGtmhrd05XrXuN4ThDhr02/payment_methods/2d62f4aa-000f-5000-8000-1b77f067615a",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://paywithpaymentmethod-6gg6jx5ylq-uc.a.run.app",
+					"protocol": "https",
+					"host": [
+						"paywithpaymentmethod-6gg6jx5ylq-uc",
+						"a",
+						"run",
+						"app"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "base_features:refundPayment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{user_id_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "orderRefPath",
+							"value": "orders/{{order_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://refundpayment-6gg6jx5ylq-uc.a.run.app",
+					"protocol": "https",
+					"host": [
+						"refundpayment-6gg6jx5ylq-uc",
+						"a",
+						"run",
+						"app"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "order_id",
+			"value": "3wcv9t9btzxSOtpNWwBL"
+		}
+	]
+}

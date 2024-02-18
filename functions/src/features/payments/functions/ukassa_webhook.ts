@@ -69,7 +69,6 @@ export const ukassaWebhook = onRequest(
             404
           );
         }
-        // const writeBatch = firestoreInstance.batch();
 
         if (
           body.object.status == "waiting_for_capture" &&
@@ -110,7 +109,7 @@ export const ukassaWebhook = onRequest(
 
           const foundPaymentMethodDocument =
             await getPaymentMethodsRecordByUserRefAndPaymentMethodId(
-              ordersRecord.created_by!,
+              ordersRecord.buyer_ref!,
               body.object.payment_method.id
             );
 
@@ -118,12 +117,12 @@ export const ukassaWebhook = onRequest(
             // ? save payment method
 
             await ordersRecord
-              .created_by!.collection(USERS_PAYMENT_METHODS_COLLECTION)
+              .buyer_ref!.collection(USERS_PAYMENT_METHODS_COLLECTION)
               .doc(body.object.payment_method.id)
               .set({
                 id: body.object.payment_method.id,
                 created_at: Timestamp.now(),
-                created_by: ordersRecord.created_by!,
+                created_by: ordersRecord.buyer_ref!,
                 last4: body.object.payment_method.card.last4,
                 type: body.object.payment_method.type,
               });

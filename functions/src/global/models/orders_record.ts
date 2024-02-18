@@ -7,7 +7,8 @@ export class OrdersRecord {
   ref: DocumentReference;
   created_at: Timestamp | null;
   payment_id: string | null;
-  created_by: DocumentReference | null;
+  buyer_ref: DocumentReference | null;
+  seller_ref: DocumentReference | null;
   price: number;
   description: string;
   status: OrderStatus | null;
@@ -17,7 +18,8 @@ export class OrdersRecord {
     ref: DocumentReference,
     created_at: Timestamp | null,
     payment_id: string | null,
-    created_by: DocumentReference | null,
+    buyer_ref: DocumentReference | null,
+    seller_ref: DocumentReference | null,
     price: number,
     description: string,
     status: OrderStatus | null,
@@ -26,7 +28,8 @@ export class OrdersRecord {
     this.ref = ref;
     this.created_at = created_at;
     this.payment_id = payment_id;
-    this.created_by = created_by;
+    this.buyer_ref = buyer_ref;
+    this.seller_ref = seller_ref;
     this.price = price;
     this.description = description;
     this.status = status;
