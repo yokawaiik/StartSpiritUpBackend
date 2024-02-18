@@ -251,11 +251,16 @@ export const ukassaWebhook = onRequest(
           error: error.message,
           type: error.type,
         });
-        response.status(error.status).send({
-          error: error.message,
-          type: error.type,
-        });
-        return;
+        if (error.type === GlobalExceptionType.DocumentNotFound) {
+          response.status(200).send("OK");
+          return;
+        } else {
+          response.status(error.status).send({
+            error: error.message,
+            type: error.type,
+          });
+          return;
+        }
       }
 
       logger.error({
