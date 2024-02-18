@@ -16,9 +16,15 @@ export const decodeUserToken = async (
   try {
     const authorization = request.get("Authorization");
 
+    logger.error({
+      message: "start decode user token",
+      header: request.headers,
+      request: request,
+    });
+
     const token = authorization;
 
-    if (token === undefined) {
+    if (!token) {
       return null;
     }
 
@@ -54,6 +60,7 @@ export const decodeUserToken = async (
       message: message,
       type: type,
       error: error,
+      request: request,
     });
 
     throw new GlobalException(message, type);
