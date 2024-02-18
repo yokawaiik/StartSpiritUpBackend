@@ -1,3 +1,4 @@
+import { OrderStatus } from "../enums/order_status";
 import { OrdersRecord } from "../models/orders_record";
 
 export class OrdersRecordMapper {
@@ -14,7 +15,7 @@ export class OrdersRecordMapper {
       data["seller_ref"] ?? null,
       data["amount"] ?? null,
       data["description"] ?? null,
-      data["status"] ?? null,
+      data["status"] ?? OrderStatus.Unexpected,
       data["confirmation_url"] ?? null
     );
   }

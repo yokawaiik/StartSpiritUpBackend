@@ -45,7 +45,8 @@ export const ukassaWebhook = onRequest(
       });
 
       if (body.event == UkassaEvents.WaitingForCapture) {
-        const paymentId = body.object.payment_id;
+        const paymentId = body.object.id;
+        // const paymentId = body.object.payment_id;
 
         // ? info : search order
         const ordersRecord = await getOrdersRecordByPaymentId(
