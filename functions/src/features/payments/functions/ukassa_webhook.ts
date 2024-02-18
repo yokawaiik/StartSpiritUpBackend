@@ -92,7 +92,7 @@ export const ukassaWebhook = onRequest(
           );
 
           if (capturedPayment === null) {
-            ordersRecord.ref.update({
+            await ordersRecord.ref.update({
               status: OrderStatus.Error,
             });
 
@@ -102,7 +102,7 @@ export const ukassaWebhook = onRequest(
             );
           } else {
             // ? info: confirm payment
-            ordersRecord.ref.update({
+            await ordersRecord.ref.update({
               status: OrderStatus.Paid,
             });
           }
@@ -197,7 +197,7 @@ export const ukassaWebhook = onRequest(
           return;
         }
 
-        ordersRecord?.ref.update({ status: OrderStatus.Refunded });
+        await ordersRecord?.ref.update({ status: OrderStatus.Refunded });
         logger.info({
           message: `Order with uid ${paymentId} has just been refunded.`,
         });

@@ -123,7 +123,7 @@ export const initialPayment = onCall(
       // update payment in order
 
       if (payment === null) {
-        ordersRecord.ref.update({ status: OrderStatus.Error });
+        await ordersRecord.ref.update({ status: OrderStatus.Error });
 
         throw new PaymentsException(
           "Payment was not created.",
@@ -132,7 +132,7 @@ export const initialPayment = onCall(
         );
       } else {
         // update order
-        ordersRecord.ref.update({
+        await ordersRecord.ref.update({
           status: OrderStatus.Pending,
           payment_id: payment.id,
           confirmation_url: payment.confirmation.confirmation_url,
@@ -154,7 +154,7 @@ export const initialPayment = onCall(
       return {
         status: 200,
         message: "Payment was created and added to order.",
-        order: updatedOrdersRecord,
+        // order: updatedOrdersRecord,
         orderPath: updatedOrdersRecord.ref.path,
         url: payment.confirmation.confirmation_url,
       };

@@ -137,7 +137,7 @@ export const refundPayment = onCall(
       // update payment in order
 
       if (refund === null) {
-        ordersRecord.ref.update({ status: OrderStatus.RefundError });
+        await ordersRecord.ref.update({ status: OrderStatus.RefundError });
 
         throw new PaymentsException(
           "Refund was not created.",
