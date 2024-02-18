@@ -241,10 +241,15 @@ export const ukassaWebhook = onRequest(
           status: error.status,
           ...error.body,
         });
-        response.status(error.status).send({
-          error: error.message,
-          ...error.body,
-        });
+
+        if (error.type === PaymentsExceptionType.PaymentAlreadyRefunded) {
+          response.status(200).send("OK");
+        } else {
+          response.status(error.status).send({
+            error: error.message,
+            ...error.body,
+          });
+        }
         return;
       } else if (error instanceof GlobalException) {
         logger.error({
