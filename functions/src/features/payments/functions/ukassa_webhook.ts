@@ -136,6 +136,28 @@ export const ukassaWebhook = onRequest(
 
           response.status(200).send("OK");
         }
+      } else if (body.event === UkassaEvents.WaitingForCapture) {
+        const paymentId = body.object.id;
+        // ? info : search order
+        const ordersRecord = await getOrdersRecordByPaymentId(
+          firestoreCollectionsConfig,
+          paymentId
+        );
+
+        logger.info({
+          message: `Order with uid is ${paymentId}.`,
+          ordersRecord: ordersRecord,
+        });
+
+        if (ordersRecord === null) {
+          throw new GlobalException(
+            `Order with uid ${paymentId} is not found or amount is null.`,
+            GlobalExceptionType.DocumentNotFound,
+            404
+          );
+        }
+
+        await ordersRecord?.ref.update({ status: OrderStatus.Cancelled });
       } else if (body.event == UkassaEvents.PaymentSucceeded) {
         const paymentId = body.object.id;
 
