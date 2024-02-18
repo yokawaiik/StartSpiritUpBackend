@@ -114,7 +114,7 @@ export const initialPayment = onRequest(
       const payment: Payment | null = await createUkassaPayment(
         process.env.UKASSA_SHOP_ID!,
         process.env.UKASSA_SECRET_KEY!,
-        ordersRecord.price.toString(), // RUB currency format,
+        ordersRecord.amount.toString(), // RUB currency format,
         DEFAULT_CURRENCY,
         usersRecord.ref,
         ordersRecord.description ?? UKASSA_PAYMENT_DESCRIPTION

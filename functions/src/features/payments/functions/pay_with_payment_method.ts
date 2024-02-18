@@ -99,9 +99,9 @@ export const payWithPaymentMethod = onRequest(
         getRefFromPath(orderRefPath)
       );
 
-      if (ordersRecord === null || ordersRecord?.price === null) {
+      if (ordersRecord === null || ordersRecord?.amount === null) {
         throw new GlobalException(
-          `Order with ref ${orderRefPath} is not found or price is null.`,
+          `Order with ref ${orderRefPath} is not found or amount is null.`,
           GlobalExceptionType.DocumentNotFound,
           404
         );
@@ -118,11 +118,11 @@ export const payWithPaymentMethod = onRequest(
         );
       }
 
-      const priceValue = ordersRecord?.price!.toString();
+      const amountValue = ordersRecord?.amount!.toString();
 
       logger.info({
-        message: `Price value is ${priceValue}.`,
-        priceValue: priceValue,
+        message: `Amount value is ${amountValue}.`,
+        amountValue: amountValue,
       });
 
       const paymentMethodRef = getRefFromPath(paymentMethodRefPath);
@@ -157,9 +157,9 @@ export const payWithPaymentMethod = onRequest(
       const payment = await createUkassaPayment(
         process.env.UKASSA_SHOP_ID!,
         process.env.UKASSA_SECRET_KEY!,
-        priceValue,
+        amountValue,
         DEFAULT_CURRENCY,
-        ordersRecord.created_by!,
+        ordersRecord.buyer_ref!,
         ordersRecord.description ?? UKASSA_PAYMENT_DESCRIPTION,
         true,
         paymentMethodsRecord.id

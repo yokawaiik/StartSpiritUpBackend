@@ -60,11 +60,11 @@ export const ukassaWebhook = onRequest(
 
         if (
           ordersRecord === null ||
-          ordersRecord?.price === null ||
+          ordersRecord?.amount === null ||
           ordersRecord?.payment_id === null
         ) {
           throw new GlobalException(
-            `Order with uid ${paymentId} is not found or price is null.`,
+            `Order with uid ${paymentId} is not found or amount is null.`,
             GlobalExceptionType.DocumentNotFound,
             404
           );
@@ -74,12 +74,12 @@ export const ukassaWebhook = onRequest(
           body.object.status == "waiting_for_capture" &&
           ordersRecord.status !== OrderStatus.Paid
         ) {
-          const priceValue = ordersRecord.price!.toString();
+          const amountValue = ordersRecord.amount!.toString();
 
           logger.info({
-            message: "Price value.",
-            rawValue: ordersRecord.price,
-            handledValue: priceValue,
+            message: "Amount value.",
+            rawValue: ordersRecord.amount,
+            handledValue: amountValue,
           });
 
           // ? info: take money from client
@@ -87,7 +87,7 @@ export const ukassaWebhook = onRequest(
             process.env.UKASSA_SHOP_ID!,
             process.env.UKASSA_SECRET_KEY!,
             ordersRecord.payment_id!,
-            priceValue,
+            amountValue,
             DEFAULT_CURRENCY
           );
 
@@ -145,11 +145,11 @@ export const ukassaWebhook = onRequest(
 
         if (
           ordersRecord === null ||
-          ordersRecord?.price === null ||
+          ordersRecord?.amount === null ||
           ordersRecord?.payment_id === null
         ) {
           throw new GlobalException(
-            `Order with uid ${paymentId} is not found or price is null.`,
+            `Order with uid ${paymentId} is not found or amount is null.`,
             GlobalExceptionType.DocumentNotFound,
             404
           );

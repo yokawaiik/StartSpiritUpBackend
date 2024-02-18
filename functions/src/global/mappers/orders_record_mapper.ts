@@ -12,7 +12,7 @@ export class OrdersRecordMapper {
       data["payment_id"] ?? null,
       data["buyer_ref"] ?? null,
       data["seller_ref"] ?? null,
-      data["price"] ?? null,
+      data["amount"] ?? null,
       data["description"] ?? null,
       data["status"] ?? null,
       data["confirmation_url"] ?? null

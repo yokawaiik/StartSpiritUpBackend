@@ -116,11 +116,11 @@ export const refundPayment = onRequest(
         );
       }
 
-      const priceValue = ordersRecord?.price!.toString();
+      const amountValue = ordersRecord?.amount!.toString();
 
       logger.info({
-        message: `Price value is ${priceValue}.`,
-        priceValue: priceValue,
+        message: `Amount value is ${amountValue}.`,
+        amountValue: amountValue,
       });
 
       // const writeBatch = firestoreInstance.batch();
@@ -130,7 +130,7 @@ export const refundPayment = onRequest(
         process.env.UKASSA_SHOP_ID!,
         process.env.UKASSA_SECRET_KEY!,
         ordersRecord.payment_id,
-        priceValue,
+        amountValue,
         DEFAULT_CURRENCY,
         ordersRecord.description ?? UKASSA_PAYMENT_REFUND_DESCRIPTION
       );
