@@ -136,7 +136,7 @@ export const ukassaWebhook = onRequest(
 
           response.status(200).send("OK");
         }
-      } else if (body.event === UkassaEvents.WaitingForCapture) {
+      } else if (body.event === UkassaEvents.PaymentCanceled) {
         const paymentId = body.object.id;
         // ? info : search order
         const ordersRecord = await getOrdersRecordByPaymentId(
@@ -158,6 +158,8 @@ export const ukassaWebhook = onRequest(
         }
 
         await ordersRecord?.ref.update({ status: OrderStatus.Cancelled });
+
+        response.status(200).send("OK");
       } else if (body.event == UkassaEvents.PaymentSucceeded) {
         const paymentId = body.object.id;
 
