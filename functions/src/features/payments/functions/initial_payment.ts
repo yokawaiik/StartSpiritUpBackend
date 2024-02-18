@@ -101,8 +101,8 @@ export const initialPayment = onRequest(
       }
 
       if (
-        ordersRecord.status !== OrderStatus.Paid &&
-        ordersRecord.status !== OrderStatus.Refunded
+        ordersRecord.status === OrderStatus.Paid ||
+        ordersRecord.status === OrderStatus.Refunded
       ) {
         throw new GlobalException(
           `Order with ref ${orderRefPath} has already been paid or refunded.`,

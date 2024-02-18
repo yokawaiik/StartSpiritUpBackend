@@ -45,7 +45,7 @@ export const ukassaWebhook = onRequest(
       });
 
       if (body.event == UkassaEvents.WaitingForCapture) {
-        const paymentId = body.object.id;
+        const paymentId = body.object.payment_id;
 
         // ? info : search order
         const ordersRecord = await getOrdersRecordByPaymentId(
@@ -128,7 +128,42 @@ export const ukassaWebhook = onRequest(
                 type: body.object.payment_method.type,
               });
           }
+        } else if (ordersRecord.status === OrderStatus.Paid) {
+          logger.info({
+            message: "Payment already captured.",
+          });
+
+          response.status(200).send("OK");
         }
+      } else if (body.event == UkassaEvents.PaymentSucceeded) {
+        const paymentId = body.object.id;
+
+        // ? info : search order
+        const ordersRecord = await getOrdersRecordByPaymentId(
+          firestoreCollectionsConfig,
+          paymentId
+        );
+
+        if (
+          ordersRecord === null ||
+          ordersRecord?.price === null ||
+          ordersRecord?.payment_id === null
+        ) {
+          throw new GlobalException(
+            `Order with uid ${paymentId} is not found or price is null.`,
+            GlobalExceptionType.DocumentNotFound,
+            404
+          );
+        }
+
+        logger.info({
+          message: `Order with uid is ${paymentId}.`,
+          ordersRecord: ordersRecord,
+        });
+
+        await ordersRecord?.ref.update({ status: OrderStatus.Paid });
+
+        response.status(200).send("OK");
       } else if (body.event == UkassaEvents.RefundSucceeded) {
         logger.info({
           message: "Refund succeeded.",

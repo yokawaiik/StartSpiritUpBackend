@@ -74,6 +74,7 @@ export const payWithPaymentMethod = onRequest(
       logger.info({
         message: `Request to initial payment with Ukassa user with uid: ${decodedUserToken.uid}.`,
         decodedUserToken: decodedUserToken,
+        request: request,
       });
 
       // -- check if request by parent
@@ -106,6 +107,17 @@ export const payWithPaymentMethod = onRequest(
         );
       }
 
+      if (
+        ordersRecord.status === OrderStatus.Paid ||
+        ordersRecord.status === OrderStatus.Refunded
+      ) {
+        throw new GlobalException(
+          `Order with ref ${orderRefPath} has already been paid or refunded.`,
+          GlobalExceptionType.DocumentNotFound,
+          403
+        );
+      }
+
       const priceValue = ordersRecord?.price!.toString();
 
       logger.info({
@@ -114,6 +126,7 @@ export const payWithPaymentMethod = onRequest(
       });
 
       const paymentMethodRef = getRefFromPath(paymentMethodRefPath);
+
       const paymentMethodsRecord = await getPaymentMethodsRecordByRef(
         paymentMethodRef
       );
@@ -123,6 +136,14 @@ export const payWithPaymentMethod = onRequest(
           `Payment method with ref ${paymentMethodRefPath} is not found or payment id is null.`,
           GlobalExceptionType.DocumentNotFound,
           404
+        );
+      }
+
+      if (paymentMethodsRecord.created_by?.path !== usersRecord.ref.path) {
+        throw new GlobalException(
+          `Payment method with ref ${paymentMethodRefPath} does not belong to user with uid ${decodedUserToken.uid}.`,
+          GlobalExceptionType.DocumentNotFound,
+          403
         );
       }
 
@@ -160,7 +181,8 @@ export const payWithPaymentMethod = onRequest(
         );
       } else {
         writeBatch.update(ordersRecord.ref, {
-          status: OrderStatus.Paid,
+          status: OrderStatus.Pending,
+          payment_id: payment.id,
         });
 
         await writeBatch.commit();

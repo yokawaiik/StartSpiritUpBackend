@@ -12,6 +12,11 @@ export const getPaymentMethodsRecordByRef = async (
   ref: DocumentReference
 ): Promise<PaymentMethodsRecord | null> => {
   try {
+    logger.info({
+      message: `Get document from payment methods collection by ref ${ref}.`,
+      ref: ref,
+    });
+
     const document = await ref.get();
 
     logger.info({

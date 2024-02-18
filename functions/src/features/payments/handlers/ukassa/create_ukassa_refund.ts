@@ -35,7 +35,7 @@ export const createUkassaRefund = async (
     const refund = await checkout.createRefund(createRefund, idempotenceKey);
 
     logger.info({
-      message: "Success ukassa refund.",
+      message: "Created ukassa refund.",
       payment: refund,
     });
 
