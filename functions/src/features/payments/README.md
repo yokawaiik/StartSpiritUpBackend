@@ -21,13 +21,35 @@
 
 ## Функции 
 
-Функции требуют заголовок 
-    Authorization: ${user_id_token}
+[Вызываются в коде Dart](https://firebase.flutter.dev/docs/functions/usage/#calling-endpoints-with-parameters)
+
+<!-- Функции требуют заголовок 
+    Authorization: ${user_id_token} -->
+
+STATUS:
+    200 - OK
+    400 - Требуемые параметры не найдены
+    401 - Не авторизован
+    403 - Запрещено действие
+    404 - Документ не найден
+    500 - Ошибка сервера
 
 ### Function URL (base_features:initialPayment(us-central1))
 
 Параметры:
     orderRefPath: string,
+
+Объект ответа с полями:
+```
+    {
+        status: int // [STATUS],
+        message: String // не обязательныое поле
+        order: Map<String, dynamic> // дубликат объекта orders
+        orderPath: String, // ref path на документ в orders
+        url: String, // ссылка на оплату в Ukassa 
+        error: String // не обязательныое поле, если есть
+    }
+```
 
 ### Function URL (base_features:payWithPaymentMethod(us-central1))
 
@@ -35,10 +57,28 @@
     orderRefPath: string
     paymentMethodRefPath: string
 
+Ответы:
+```
+    {
+        status: int // [STATUS],
+        message: String // не обязательныое поле
+        error: String // не обязательныое поле, если есть
+    }
+```
+
 ### Function URL (base_features:refundPayment(us-central1))
 
 Параметры:
     orderRefPath: string
+
+Ответы:
+```
+    {
+        status: int // [STATUS],
+        message: String // не обязательныое поле
+        error: String // не обязательныое поле, если есть
+    }
+```
 
 ### Function URL (base_features:ukassaWebhook(us-central1))
 

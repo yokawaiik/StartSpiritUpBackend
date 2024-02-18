@@ -1,11 +1,11 @@
 # Модули backend для StartSpiritUp
 
-## [Payments](./functions/src/features/payments/README.md)
+## [Payments with Callable Functions](./functions/src/features/payments/README.md)
 
 - [x] Оплата в приложении
 - [x] Возврат
 - [x] Вывод (триггер)
 
-## [Тестирование](./testing_utils/README.md)
+<!-- ## [Тестирование](./testing_utils/README.md)
 
-Утилита для тестирования
+Утилита для тестирования -->

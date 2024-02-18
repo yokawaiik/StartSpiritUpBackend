@@ -1,4 +1,4 @@
-import { onRequest } from "firebase-functions/v2/https";
+import { onCall } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import { getMissingBodyRequiredParams } from "../../../global/utils/get_missing_body_required_source_params";
 
@@ -6,7 +6,6 @@ import {
   GlobalException,
   GlobalExceptionType,
 } from "../../../global/exceptions/global_exception";
-import { decodeUserToken } from "../../../global/utils/decode_user_token";
 import { firestoreCollectionsConfig } from "../../../global/firebase_config/firebase_config";
 
 import {
@@ -30,50 +29,50 @@ import { createUkassaRefund } from "../handlers/ukassa/create_ukassa_refund";
  * required params:
  *  orderRefPath: string,
  */
-export const refundPayment = onRequest(
+export const refundPayment = onCall(
   {
     maxInstances: 10,
     secrets: [UKASSA_SHOP_ID, UKASSA_SECRET_KEY],
   },
-  async (request, response) => {
+  async (request) => {
     try {
       // -- boiler plate verifiction
-      const decodedUserToken = await decodeUserToken(request);
 
-      if (decodedUserToken === null) {
+      if (request.auth === undefined || request.auth?.uid === null) {
         logger.info({
           message: GlobalExceptionType.NotAuthorized,
           request: request,
         });
-        response.status(401).send({
+
+        return {
+          status: 401,
           error: GlobalExceptionType.NotAuthorized,
-        });
-        return;
+        };
       }
+
+      const uid = request.auth?.uid;
 
       // -- boiler plate verifiction
       // -- check if request by parent
       const usersRecord = await getUsersRecordByUid(
         firestoreCollectionsConfig,
-        decodedUserToken.uid
+        uid
       );
-
       if (usersRecord === null) {
         throw new GlobalException(
-          `User with uid ${decodedUserToken.uid} is not found.`,
+          `User with uid ${uid} is not found.`,
           GlobalExceptionType.NotAuthorized,
           401
         );
       }
 
       logger.info({
-        message: `Request to initial payment with Ukassa user with uid: ${decodedUserToken.uid}.`,
-        decodedUserToken: decodedUserToken,
+        message: `Request to initial payment with Ukassa user with uid: ${uid}.`,
       });
 
       // -- check if request by parent
 
-      const missedParams = getMissingBodyRequiredParams(request.body, [
+      const missedParams = getMissingBodyRequiredParams(request.data, [
         "orderRefPath",
       ]);
 
@@ -85,7 +84,7 @@ export const refundPayment = onRequest(
         );
       }
 
-      const { orderRefPath } = request.body;
+      const { orderRefPath } = request.data;
 
       // ? info : check if order exist
       const ordersRecord = await getOrdersRecordByRef(
@@ -157,9 +156,10 @@ export const refundPayment = onRequest(
         message: "Payment was refunded.",
       });
 
-      response.status(200).send({
+      return {
+        status: 200,
         message: "Payment was refunded.",
-      });
+      };
     } catch (error) {
       if (error instanceof PaymentsException) {
         logger.warn({
@@ -168,21 +168,23 @@ export const refundPayment = onRequest(
           status: error.status,
           ...error.body,
         });
-        response.status(error.status).send({
+        return {
+          status: error.status,
           error: error.message,
           ...error.body,
-        });
+        };
         return;
       } else if (error instanceof GlobalException) {
         logger.warn({
+          status: error.status,
           error: error.message,
           type: error.type,
         });
-        response.status(error.status).send({
+        return {
+          status: error.status,
           error: error.message,
           type: error.type,
-        });
-        return;
+        };
       }
 
       logger.error({
@@ -190,10 +192,11 @@ export const refundPayment = onRequest(
         type: GlobalExceptionType.Unexpected,
       });
 
-      response.status(500).send({
+      return {
+        status: 400,
         error: error,
         type: GlobalExceptionType.Unexpected,
-      });
+      };
     }
   }
 );
