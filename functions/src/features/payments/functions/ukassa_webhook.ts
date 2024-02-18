@@ -105,6 +105,7 @@ export const ukassaWebhook = onRequest(
             // ? info: confirm payment
             await ordersRecord.ref.update({
               status: OrderStatus.Paid,
+              refundable: body.object.refundable,
             });
           }
 

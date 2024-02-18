@@ -13,6 +13,7 @@ export class OrdersRecord {
   description: string;
   status: OrderStatus | null;
   confirmation_url: string | null;
+  refundable: boolean | null;
 
   constructor(
     ref: DocumentReference,
@@ -23,7 +24,8 @@ export class OrdersRecord {
     amount: number,
     description: string,
     status: OrderStatus | null,
-    confirmation_url: string | null
+    confirmation_url: string | null,
+    refundable: boolean | null
   ) {
     this.ref = ref;
     this.created_at = created_at;
@@ -34,5 +36,6 @@ export class OrdersRecord {
     this.description = description;
     this.status = status;
     this.confirmation_url = confirmation_url;
+    this.refundable = refundable;
   }
 }

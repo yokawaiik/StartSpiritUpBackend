@@ -16,7 +16,8 @@ export class OrdersRecordMapper {
       data["amount"] ?? null,
       data["description"] ?? null,
       data["status"] ?? OrderStatus.Unexpected,
-      data["confirmation_url"] ?? null
+      data["confirmation_url"] ?? null,
+      data["refundable"] ?? null
     );
   }
 }
