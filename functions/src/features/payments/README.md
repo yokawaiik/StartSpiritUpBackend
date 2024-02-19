@@ -83,11 +83,11 @@ STATUS:
 ### Function URL (base_features:ukassaWebhook(us-central1))
 
 
-## Триггер для коллекции payout_requests
+## Триггер updatePayoutsRequestsTrigger для коллекции payout_requests
 Работает для коллекции payout_requests/{doc} и реагирует при изменении в документе поля:
     status = pending --> status = accepted
 
-## Триггер для коллекции events
+## Триггер updateEventsTrigger для коллекции events 
 Работает для коллекции events/{doc} и реагирует при изменении в документе поля: status.
 
 При изменении 
