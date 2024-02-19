@@ -17,6 +17,7 @@ const app = admin.initializeApp({
 const firebaseAuth = getAuth(app);
 
 const firestoreInstance = admin.firestore();
+const adminFirestore = admin.firestore;
 
 const fcm = admin.messaging();
 
@@ -26,4 +27,10 @@ const firestoreCollectionsConfig = new FirestoreCollectionsConfig(
   firestoreInstance.collection("purchases")
 );
 
-export { firebaseAuth, firestoreInstance, firestoreCollectionsConfig, fcm };
+export {
+  firebaseAuth,
+  firestoreInstance,
+  adminFirestore,
+  firestoreCollectionsConfig,
+  fcm,
+};

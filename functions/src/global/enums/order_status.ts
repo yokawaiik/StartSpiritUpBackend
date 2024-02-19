@@ -6,5 +6,6 @@ export enum OrderStatus {
   Error = "error",
   Unexpected = "unexpected",
   Refunded = "refunded",
-  RefundError = "refund_error"
+  RefundError = "refund_error",
+  Completed = "completed"
 }
